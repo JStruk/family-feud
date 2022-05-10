@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->string('text');
             $table->unsignedBigInteger('question_id');
+            $table->string('text');
             $table->unsignedInteger('weight');
             $table->foreign('question_id')->references('id')->on('questions');
         });
