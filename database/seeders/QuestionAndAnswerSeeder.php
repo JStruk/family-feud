@@ -27,7 +27,6 @@ class QuestionAndAnswerSeeder extends Seeder
         $data = file_get_contents(resource_path('app_data/questions.json'));
         $parsedToJson = json_decode($data, true);
 
-        //TODO: get mysql connetion healthy and try to run this!
         collect($parsedToJson)->each(function (array $answers, string $question) {
             $question = Question::query()->updateOrCreate(['text' => $question]);
 
