@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\PseudoTypes\PositiveInteger;
 use phpDocumentor\Reflection\Types\Integer;
 
@@ -18,25 +19,35 @@ class QuestionAndAnswerSeeder extends Seeder
      */
     public function run()
     {
-        // open json file
-        // iterate each line
-        // the key becomes the question
-        // iterate over each value
-        // string becomes answer, int becomes weight
-
         $data = file_get_contents(resource_path('app_data/questions.json'));
         $parsedToJson = json_decode($data, true);
 
-        collect($parsedToJson)->each(function (array $answers, string $question) {
-            $question = Question::query()->updateOrCreate(['text' => $question]);
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Answer::query()->truncate();
+        Question::query()->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-            collect($answers)->each(function ($answer_values) use ($question) {
-               $answer = Answer::query()->updateOrCreate([
-                   'question_id' => $question->id,
-                   'text' => $answer_values[0],
-                   'weight' => $answer_values[1]
-               ]);
+        $nextQuestionId = 1;
+        $questions = collect([]);
+        $answersToInsert = collect([]);
+
+        collect($parsedToJson)->unique()->each(function (array $answers, string $question) use (&$nextQuestionId, $questions, $answersToInsert) {
+            $questions->add([
+                "text" => $question,
+                "id" => $nextQuestionId
+            ]);
+
+            collect($answers)->unique()->each(function ($answer_values) use ($nextQuestionId, $answersToInsert) {
+                $answersToInsert->add([
+                    'question_id' => $nextQuestionId,
+                    'text' => $answer_values[0],
+                    'weight' => $answer_values[1]
+                ]);
             });
+            $nextQuestionId = $nextQuestionId + 1;
         });
+
+        Question::query()->insert($questions->toArray());
+        Answer::query()->insert($answersToInsert->toArray());
     }
 }
