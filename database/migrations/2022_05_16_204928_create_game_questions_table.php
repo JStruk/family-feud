@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('game_questions', function (Blueprint $table) {
             $table->unsignedBigInteger('game_id');
             $table->unsignedBigInteger('question_id');
-            $table->foreign('game_id')->references('id')->on('game');
+            $table->foreign('game_id')->references('id')->on('games');
             $table->foreign('question_id')->references('id')->on('questions');
         });
     }
