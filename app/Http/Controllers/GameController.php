@@ -13,9 +13,9 @@ class GameController extends Controller
         $questions = Question::query()->inRandomOrder()->limit(5)->with('answers')->get();
         $game = Game::query()->create()->questions()->attach($questions);
 
-        return [
+        return response([
             "game" => $game,
             "questions" => $questions
-        ];
+        ], 201);
     }
 }
