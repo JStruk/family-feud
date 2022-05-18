@@ -7,6 +7,7 @@ use App\Models\Question;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use phpDocumentor\Reflection\PseudoTypes\PositiveInteger;
 use phpDocumentor\Reflection\Types\Integer;
 
@@ -22,10 +23,10 @@ class QuestionAndAnswerSeeder extends Seeder
         $data = file_get_contents(resource_path('app_data/questions.json'));
         $parsedToJson = json_decode($data, true);
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
         Answer::query()->truncate();
         Question::query()->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::enableForeignKeyConstraints();
 
         $nextQuestionId = 1;
         $questions = collect([]);
