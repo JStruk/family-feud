@@ -11,6 +11,10 @@ class Question extends Model
     use HasFactory;
 
     public function games(){
-        return $this->belongsToMany(Game::class);
+        return $this->belongsToMany(Game::class, 'game_questions');
+    }
+
+    public function answers(){
+        return $this->hasMany(Answer::class);
     }
 }

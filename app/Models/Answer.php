@@ -9,4 +9,8 @@ class Answer extends Model
 {
     public $timestamps = false;
     use HasFactory;
+
+    public function question(){
+        return $this->belongsTo(Question::class);
+    }
 }
